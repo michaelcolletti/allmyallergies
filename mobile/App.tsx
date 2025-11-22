@@ -12,29 +12,29 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import AlertsScreen from './src/screens/AlertsScreen';
 
 // Services
-import { initWasmEngine } from './src/services/wasmService';
+import { initEngine } from './src/services/allergiesService';
 import config from './tamagui.config';
 
 const Tab = createBottomTabNavigator();
 const queryClient = new QueryClient();
 
 export default function App() {
-  const [wasmReady, setWasmReady] = useState(false);
+  const [engineReady, setEngineReady] = useState(false);
 
   useEffect(() => {
-    // Initialize Rust/WASM engine
-    initWasmEngine()
+    // Initialize TypeScript engine (instant!)
+    initEngine()
       .then(() => {
-        console.log('✅ WASM engine initialized');
-        setWasmReady(true);
+        console.log('✅ AllergiesEngine initialized');
+        setEngineReady(true);
       })
       .catch((err) => {
-        console.error('❌ WASM initialization failed:', err);
+        console.error('❌ Engine initialization failed:', err);
       });
   }, []);
 
-  if (!wasmReady) {
-    return null; // Show loading screen
+  if (!engineReady) {
+    return null; // Show loading screen (optional - TS init is instant)
   }
 
   return (

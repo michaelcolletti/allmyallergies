@@ -4,7 +4,7 @@ import { YStack, XStack, H2, Text, Button, Card, Input } from 'tamagui';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import * as Haptics from 'expo-haptics';
 import { useAllergyStore } from '../store/allergyStore';
-import { analyzeIngredients, lookupBarcode } from '../services/wasmService';
+import { analyzeIngredients, lookupBarcode } from '../services/allergiesService';
 
 export default function ScanScreen() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -13,7 +13,7 @@ export default function ScanScreen() {
   const [manualInput, setManualInput] = useState('');
   const [result, setResult] = useState<any>(null);
 
-  const { getProfileJson } = useAllergyStore();
+  const { profile } = useAllergyStore();
 
   useEffect(() => {
     (async () => {
@@ -30,14 +30,13 @@ export default function ScanScreen() {
 
     setAnalyzing(true);
     try {
-      // Lookup barcode using AgentDB (p95 < 50ms)
+      // Lookup barcode
       const productData = await lookupBarcode(data);
 
-      // Analyze ingredients using Rust/WASM (352x faster)
-      const profileJson = getProfileJson();
+      // Analyze ingredients using TypeScript engine
       const analysisResult = await analyzeIngredients(
         productData.ingredients,
-        profileJson
+        profile
       );
 
       setResult({
@@ -46,7 +45,7 @@ export default function ScanScreen() {
       });
 
       // Haptic feedback based on safety
-      if (!analysisResult.is_safe) {
+      if (!analysisResult.isSafe) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         Alert.alert(
           '⚠️ ALLERGEN DETECTED',
@@ -72,18 +71,17 @@ export default function ScanScreen() {
 
     setAnalyzing(true);
     try {
-      const profileJson = getProfileJson();
-      const analysisResult = await analyzeIngredients(manualInput, profileJson);
+      const analysisResult = await analyzeIngredients(manualInput, profile);
 
       setResult({
         product: {
-          product_name: 'Manual Entry',
+          productName: 'Manual Entry',
           ingredients: manualInput,
         },
         analysis: analysisResult,
       });
 
-      if (!analysisResult.is_safe) {
+      if (!analysisResult.isSafe) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         Alert.alert(
           '⚠️ ALLERGEN DETECTED',
@@ -193,22 +191,22 @@ export default function ScanScreen() {
         <YStack padding="$4">
           <Card
             padded
-            backgroundColor={result.analysis.is_safe ? '$green2' : '$red2'}
+            backgroundColor={result.analysis.isSafe ? '$green2' : '$red2'}
           >
             <H2 marginBottom="$2">
-              {result.analysis.is_safe ? '✅ SAFE' : '⚠️ DANGER'}
+              {result.analysis.isSafe ? '✅ SAFE' : '⚠️ DANGER'}
             </H2>
-            <Text fontWeight="bold">{result.product.product_name}</Text>
+            <Text fontWeight="bold">{result.product.productName}</Text>
             <Text marginTop="$2" marginBottom="$2">
               {result.product.ingredients}
             </Text>
 
-            {result.analysis.detected_allergens.length > 0 && (
+            {result.analysis.detectedAllergens.length > 0 && (
               <YStack marginTop="$3" space="$2">
                 <Text fontWeight="bold" color="$danger">
                   Detected Allergens:
                 </Text>
-                {result.analysis.detected_allergens.map((allergen: string) => (
+                {result.analysis.detectedAllergens.map((allergen: string) => (
                   <Text key={allergen}>• {allergen}</Text>
                 ))}
               </YStack>
@@ -241,7 +239,7 @@ export default function ScanScreen() {
       {analyzing && (
         <YStack padding="$4" alignItems="center">
           <Text fontSize="$2" color="$gray10">
-            ⚡ Ultra-fast Rust/WASM analysis in progress...
+            ⚡ Fast TypeScript analysis in progress...
           </Text>
         </YStack>
       )}
