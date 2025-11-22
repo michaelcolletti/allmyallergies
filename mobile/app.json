@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "AllMyAllergies",
+    "slug": "allmyallergies",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.allmyallergies.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "AllMyAllergies needs camera access to scan barcodes on food products.",
+        "NSPhotoLibraryUsageDescription": "AllMyAllergies needs photo library access to analyze food labels from images.",
+        "NSContactsUsageDescription": "AllMyAllergies needs contacts access to add emergency contacts."
+      }
+    },
+    "android": {
+      "package": "com.allmyallergies.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_CONTACTS"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow AllMyAllergies to access your camera to scan barcodes."
+        }
+      ],
+      [
+        "expo-barcode-scanner",
+        {
+          "cameraPermission": "Allow AllMyAllergies to access your camera to scan barcodes."
+        }
+      ]
+    ]
+  }
+}

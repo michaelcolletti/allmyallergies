@@ -1,0 +1,67 @@
+[package]
+name = "allmyallergies-core"
+version = "0.1.0"
+edition = "2021"
+authors = ["AllMyAllergies Team"]
+description = "High-performance Rust/WASM core for AllMyAllergies mobile app"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# WASM bindings
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde-wasm-bindgen = "0.6"
+
+# Vector database / embeddings
+ndarray = "0.15"
+faiss = { version = "0.12", optional = true }
+
+# Text processing
+regex = "1.10"
+unicode-normalization = "0.1"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Async
+futures = "0.3"
+tokio = { version = "1.35", features = ["sync"], default-features = false }
+
+# Logging (for WASM)
+console_error_panic_hook = "0.1"
+wasm-logger = "0.2"
+log = "0.4"
+
+# Performance
+rayon = "1.8"
+parking_lot = "0.12"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-sys = { version = "0.3", features = [
+    "console",
+    "Window",
+    "Document",
+    "Storage",
+] }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.release-wasm]
+inherits = "release"
+opt-level = "z"  # Optimize for size
