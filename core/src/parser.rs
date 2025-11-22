@@ -129,7 +129,7 @@ impl IngredientParser {
 
         // Remove common suffixes that don't affect allergen matching
         let suffixes = ["meal", "flour", "powder", "oil", "extract"];
-        let mut result = lowercased.clone();
+        let result = lowercased.clone();
 
         for suffix in &suffixes {
             let pattern = format!(" {}", suffix);

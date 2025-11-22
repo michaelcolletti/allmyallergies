@@ -17,7 +17,7 @@ pub struct AllergenInfo {
     pub cross_reactions: Vec<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum AllergenCategory {
     TreeNut,
     Peanut,

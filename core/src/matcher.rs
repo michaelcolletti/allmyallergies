@@ -6,9 +6,9 @@
  */
 
 use crate::{
-    allergen_db::{AllergenDatabase, AllergenInfo},
+    allergen_db::AllergenDatabase,
     parser::Ingredient,
-    AllergyProfile, SeverityLevel, AllergenMatch,
+    AllergyProfile, AllergenMatch,
 };
 
 pub struct AllergenMatcher {

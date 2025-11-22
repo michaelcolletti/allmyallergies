@@ -7,7 +7,6 @@
 
 use wasm_bindgen::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 mod allergen_db;
 mod parser;
@@ -28,7 +27,7 @@ pub fn init() {
 }
 
 /// Severity level of an allergic reaction
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub enum SeverityLevel {
     Mild = 1,
@@ -247,10 +246,10 @@ impl AllergiesEngine {
 }
 
 #[derive(Debug, Clone)]
-struct AllergenMatch {
-    allergen: String,
-    severity: SeverityLevel,
-    confidence: f32,
+pub(crate) struct AllergenMatch {
+    pub allergen: String,
+    pub severity: SeverityLevel,
+    pub confidence: f32,
 }
 
 #[cfg(test)]
