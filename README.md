@@ -1,10 +1,17 @@
-# AllMyAllergies 🛡️
+# AllMyAllergies
 
-The world's most advanced allergy protection mobile app, built with ruv's SPARC methodology and modern TypeScript.
+**The World's Best Allergies App** - AI-powered allergen detection that learns from you.
+
+Built with ruv's **SPARC methodology** and **AgentDB agentic-flow**.
 
 ## Overview
 
-AllMyAllergies is a life-saving mobile application that protects users from food allergies and sensitivities through intelligent ingredient analysis, real-time alerts, and clean, maintainable TypeScript architecture.
+AllMyAllergies is an intelligent mobile application that protects users from food allergies through:
+
+- **Smart Detection** - AI-powered ingredient analysis that improves over time
+- **Personalized Learning** - Learns your specific allergen patterns and cross-reactions
+- **Causal Discovery** - Automatically discovers hidden allergen relationships from your reaction history
+- **Privacy-First** - All AI learning happens on-device, your health data never leaves your phone
 
 ## Architecture
 
@@ -26,25 +33,52 @@ Built following ruv's **SPARC Methodology**:
 
 ## Core Features
 
-### 🔍 Intelligent Scanning
+### Intelligent Scanning
 - Barcode scanning with instant ingredient analysis
 - Manual ingredient input with smart parsing
 - Fuzzy matching for misspellings and variations
+- **AI-enhanced detection** using learned patterns
 
-### 🧬 Personalized Protection
+### AI Learning System (AgentDB agentic-flow)
+
+**Reflexion Memory** - Learns from every scan:
+- Records all detection attempts with outcomes
+- Retrieves similar past experiences to inform new scans
+- Self-critiques to improve accuracy over time
+
+**Skill Library** - Reusable knowledge:
+- Creates detection skills from successful patterns
+- Learns allergen aliases (e.g., "groundnut" = "peanut")
+- Skills improve with usage and feedback
+
+**Causal Memory Graph** - Discovers relationships:
+- Tracks cause-and-effect from reaction history
+- Discovers hidden cross-reactions specific to you
+- Predicts likely reactions based on patterns
+
+### Personalized Protection
 - Detailed allergy & sensitivity profiles
-- Cross-reactivity warnings (e.g., legume cross-reactions)
+- AI-discovered cross-reactivity warnings
 - Severity level tracking (Mild, Moderate, Severe, Anaphylaxis)
+- Learns YOUR specific triggers over time
 
-### ⚡ Real-Time Alerts
-- Instant allergen detection
+### Real-Time Alerts
+- Instant allergen detection with confidence scores
 - Haptic feedback for safety warnings
-- Visual & audio alerts based on severity
+- Causal warnings from personal history
+- **Learning improvement indicators**
 
-### 🗄️ Fast Local Database
-- In-memory allergen database
-- Levenshtein distance for fuzzy matching
-- AsyncStorage for profile persistence
+### Reaction Journal
+- Log meals and allergic reactions
+- Track symptoms, timing, and severity
+- Automatic causal pattern discovery
+- Safe consumption logging for better AI training
+
+### Learning Insights Dashboard
+- View AI learning statistics
+- See discovered patterns and insights
+- Track accuracy improvements
+- Export learning data for backup
 
 ## Tech Stack
 
@@ -79,19 +113,23 @@ allmyallergies/
 ├── mobile/                       # React Native app
 │   ├── src/
 │   │   ├── core/                # TypeScript core engine
-│   │   │   ├── types.ts         # Type definitions
+│   │   │   ├── types.ts         # Base type definitions
+│   │   │   ├── agenticTypes.ts  # AgentDB/agentic-flow types
 │   │   │   ├── allergenDatabase.ts
 │   │   │   ├── ingredientParser.ts
 │   │   │   ├── allergenMatcher.ts
-│   │   │   └── allergiesEngine.ts
-│   │   ├── components/          # UI components
+│   │   │   ├── allergiesEngine.ts      # Base detection engine
+│   │   │   └── smartAllergiesEngine.ts # AI-enhanced engine
 │   │   ├── screens/             # App screens
 │   │   │   ├── HomeScreen.tsx
-│   │   │   ├── ScanScreen.tsx
+│   │   │   ├── ScanScreen.tsx           # With feedback system
 │   │   │   ├── ProfileScreen.tsx
-│   │   │   └── AlertsScreen.tsx
+│   │   │   ├── AlertsScreen.tsx
+│   │   │   ├── ReactionJournalScreen.tsx  # NEW: Track reactions
+│   │   │   └── LearningInsightsScreen.tsx # NEW: AI learning stats
 │   │   ├── services/            # Business logic
-│   │   │   └── allergiesService.ts
+│   │   │   ├── allergiesService.ts
+│   │   │   └── agentMemory.ts   # AgentDB implementation
 │   │   └── store/               # State management
 │   │       └── allergyStore.ts
 │   ├── App.tsx
@@ -99,7 +137,7 @@ allmyallergies/
 └── docs/                        # Documentation
     ├── ARCHITECTURE.md
     ├── DEVELOPMENT.md
-    └── SPARC_METHODOLOGY.md
+    └── SPARC_METHODOLOGY.md     # Includes agentic-flow integration
 ```
 
 ## Getting Started
@@ -175,12 +213,22 @@ This project demonstrates **practical** application of SPARC methodology:
 
 ## Roadmap
 
+### Completed
 - [x] Core architecture design (SPARC)
 - [x] TypeScript core engine
 - [x] React Native UI
-- [x] Allergen database
-- [x] Fuzzy matching
+- [x] Allergen database with cross-reactions
+- [x] Fuzzy matching (Levenshtein distance)
 - [x] Barcode scanning
+- [x] **AgentDB agentic-flow integration**
+- [x] **Reflexion Memory** - Learn from scans
+- [x] **Skill Library** - Reusable patterns
+- [x] **Causal Memory Graph** - Cross-reaction discovery
+- [x] **Reaction Journal** - Track reactions
+- [x] **Learning Insights** - AI stats dashboard
+- [x] **User Feedback System** - Correct AI mistakes
+
+### Coming Soon
 - [ ] SQLite integration for larger databases
 - [ ] Image recognition (ML Kit)
 - [ ] LLM-powered Q&A
@@ -188,6 +236,7 @@ This project demonstrates **practical** application of SPARC methodology:
 - [ ] Social features (share safe products)
 - [ ] Apple Health / Google Fit integration
 - [ ] Wearable support
+- [ ] Cloud sync with E2E encryption
 
 ## Contributing
 
