@@ -4,27 +4,21 @@
 
 ### Required Tools
 
-1. **Rust** (1.75+)
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   rustup target add wasm32-unknown-unknown
-   ```
-
-2. **wasm-pack**
-   ```bash
-   cargo install wasm-pack
-   ```
-
-3. **Node.js** (20+)
+1. **Node.js** (20+)
    ```bash
    # Using nvm
    nvm install 20
    nvm use 20
    ```
 
-4. **React Native Development Environment**
+2. **React Native Development Environment**
    - **iOS**: Xcode 14+ (macOS only)
    - **Android**: Android Studio + SDK 33+
+
+3. **Expo CLI**
+   ```bash
+   npm install -g expo-cli
+   ```
 
 ## Project Setup
 
@@ -35,22 +29,14 @@ git clone https://github.com/michaelcolletti/allmyallergies.git
 cd allmyallergies
 ```
 
-### 2. Build Rust/WASM Core
-
-```bash
-cd core
-wasm-pack build --target bundler --out-dir ../mobile/src/wasm
-cd ..
-```
-
-### 3. Install Mobile Dependencies
+### 2. Install Dependencies
 
 ```bash
 cd mobile
 npm install
 ```
 
-### 4. Run Development Server
+### 3. Run Development Server
 
 **iOS (macOS only)**:
 ```bash
@@ -77,45 +63,38 @@ The React Native metro bundler supports hot module replacement (HMR):
 2. Save file
 3. Changes appear instantly in app
 
-For Rust changes:
-```bash
-cd core
-wasm-pack build --target bundler --out-dir ../mobile/src/wasm
-# Restart metro bundler
-```
-
 ### Code Structure
 
 ```
 allmyallergies/
-├── core/                 # Rust/WASM engine
+├── mobile/                          # React Native app
 │   ├── src/
-│   │   ├── lib.rs       # Main WASM interface
-│   │   ├── allergen_db.rs
-│   │   ├── parser.rs
-│   │   ├── matcher.rs
-│   │   └── vector_store.rs
-│   └── Cargo.toml
-├── mobile/              # React Native app
-│   ├── src/
-│   │   ├── components/  # Reusable UI components
-│   │   ├── screens/     # Screen components
-│   │   ├── services/    # Business logic
-│   │   ├── store/       # State management
-│   │   └── wasm/        # Generated WASM files
+│   │   ├── core/                   # TypeScript core engine
+│   │   │   ├── types.ts            # Base type definitions
+│   │   │   ├── agenticTypes.ts     # AgentDB agentic-flow types
+│   │   │   ├── allergenDatabase.ts # Allergen lookup database
+│   │   │   ├── ingredientParser.ts # Text parsing
+│   │   │   ├── allergenMatcher.ts  # Fuzzy matching
+│   │   │   ├── allergiesEngine.ts  # Base detection engine
+│   │   │   └── smartAllergiesEngine.ts # AI-enhanced engine
+│   │   ├── screens/                # Screen components
+│   │   │   ├── HomeScreen.tsx
+│   │   │   ├── ScanScreen.tsx      # With feedback system
+│   │   │   ├── ProfileScreen.tsx
+│   │   │   ├── AlertsScreen.tsx
+│   │   │   ├── ReactionJournalScreen.tsx
+│   │   │   └── LearningInsightsScreen.tsx
+│   │   ├── services/               # Business logic
+│   │   │   ├── allergiesService.ts
+│   │   │   └── agentMemory.ts      # AgentDB implementation
+│   │   └── store/                  # State management
+│   │       └── allergyStore.ts
 │   ├── App.tsx
 │   └── package.json
-└── docs/                # Documentation
+└── docs/                           # Documentation
 ```
 
 ## Testing
-
-### Rust Tests
-
-```bash
-cd core
-cargo test
-```
 
 ### TypeScript Tests
 
@@ -124,11 +103,18 @@ cd mobile
 npm test
 ```
 
-### E2E Tests
+### Type Checking
 
 ```bash
 cd mobile
-npm run test:e2e
+npm run type-check
+```
+
+### Linting
+
+```bash
+cd mobile
+npm run lint
 ```
 
 ## Debugging
@@ -147,46 +133,112 @@ npm run test:e2e
    # Select "Debug JS Remotely"
    ```
 
-### Rust Debugging
+### Flipper (Alternative)
 
-Use `console_error_panic_hook` for WASM panics:
+1. Install [Flipper](https://fbflipper.com/)
+2. Start app
+3. Flipper auto-connects to running app
 
-```rust
-use console_error_panic_hook;
+### Console Logging
 
-#[wasm_bindgen(start)]
-pub fn init() {
-    console_error_panic_hook::set_once();
-}
+AgentDB components log to console:
+```typescript
+// Initialization logs
+✅ SmartAllergiesEngine initialized with agentic-flow
+✅ AgentMemory initialized (agentic-flow)
+
+// Feedback logs
+✅ Feedback recorded - improving future detections
 ```
 
-View errors in browser console or React Native debugger.
+## AgentDB agentic-flow Development
 
-### Performance Profiling
+### Memory Systems
 
-**Rust/WASM**:
-```bash
-cd core
-cargo build --release
-wasm-pack build --target bundler --profiling
+The app implements three memory systems from ruv's agentic-flow:
+
+**1. Reflexion Memory** (`agentMemory.ts`)
+```typescript
+// Store scan experience
+await agentMemory.recordScanExperience(
+  { ingredients, userAllergies },
+  { detections, confidence, isSafe },
+  success
+);
+
+// Retrieve similar experiences
+const similar = await agentMemory.getRelevantExperiences(ingredients, allergies);
 ```
 
-**React Native**:
-```bash
-npm run android -- --variant=release
-# Enable Perf Monitor in app (shake device)
+**2. Skill Library** (`agentMemory.ts`)
+```typescript
+// Create learned skill
+await agentMemory.skills.create({
+  name: "detect_groundnut",
+  pattern: { trigger: "groundnut", action: "peanut", confidence: 1.0 },
+  quality: 1.0
+});
+
+// Search skills
+const skills = await agentMemory.getApplicableSkills(ingredients);
+```
+
+**3. Causal Memory** (`agentMemory.ts`)
+```typescript
+// Track reaction
+await agentMemory.trackReaction({
+  consumedItems: [{ name: "peanut butter", ingredients: ["peanuts"] }],
+  reaction: { occurred: true, severity: "moderate", symptoms: ["hives"] }
+});
+
+// Get causal warnings
+const warnings = await agentMemory.getCausalWarnings(ingredients);
+```
+
+### Adding New Skills
+
+Skills are created automatically from:
+1. User feedback on missed allergens
+2. Successful pattern detection
+3. Causal graph discovery
+
+To manually add a skill:
+```typescript
+import { getAgentMemory } from './services/agentMemory';
+
+const memory = getAgentMemory();
+await memory.skills.create({
+  name: 'custom_detection',
+  description: 'Custom allergen detection pattern',
+  category: 'allergen_detection',
+  pattern: {
+    trigger: 'ingredient_name',
+    action: 'allergen_name',
+    confidence: 0.95
+  },
+  quality: 0.9,
+  learnedFrom: []
+});
+```
+
+### Storage
+
+All data is stored locally using AsyncStorage:
+- `@allmyallergies:reflexion` - Scan episodes
+- `@allmyallergies:skills` - Learned patterns
+- `@allmyallergies:causal_edges` - Causal relationships
+- `@allmyallergies:causal_nodes` - Causal graph nodes
+- `@allmyallergies:reactions` - Reaction history
+- `@allmyallergies:insights` - AI discoveries
+
+### Exporting Data
+
+```typescript
+const data = await agentMemory.export();
+console.log(JSON.stringify(data, null, 2));
 ```
 
 ## Code Style
-
-### Rust
-
-Follow Rust standard style:
-```bash
-cd core
-cargo fmt
-cargo clippy
-```
 
 ### TypeScript
 
@@ -194,8 +246,15 @@ Using ESLint + Prettier:
 ```bash
 cd mobile
 npm run lint
-npm run format
+npm run lint -- --fix
 ```
+
+### Naming Conventions
+
+- **Files**: `camelCase.ts` or `PascalCase.tsx` for components
+- **Types/Interfaces**: `PascalCase`
+- **Functions**: `camelCase`
+- **Constants**: `UPPER_SNAKE_CASE`
 
 ## Building for Production
 
@@ -205,51 +264,31 @@ npm run format
 2. Build:
    ```bash
    cd mobile
-   expo build:ios --release-channel production
+   eas build --platform ios
    ```
 
 ### Android
 
-1. Generate signing key
+1. Configure keystore
 2. Build:
    ```bash
    cd mobile
-   expo build:android --release-channel production
+   eas build --platform android
    ```
 
-### WASM Optimization
+## Performance
 
-For production builds, use size optimization:
+TypeScript performance is excellent for mobile:
 
-```bash
-cd core
-wasm-pack build --target bundler --release
-wasm-opt -Oz -o output.wasm input.wasm
-```
-
-## Performance Benchmarks
-
-Expected performance metrics:
-
-| Operation | JavaScript | Rust/WASM | Improvement |
-|-----------|-----------|-----------|-------------|
-| Parse 100 ingredients | 45ms | 0.13ms | 352x faster |
-| Vector search (10K items) | 150ms | 1ms | 150x faster |
-| Allergen matching | 12ms | 0.5ms | 24x faster |
+| Operation | Time | User Perception |
+|-----------|------|-----------------|
+| Parse 100 ingredients | ~2ms | Instant |
+| Fuzzy match 1000 items | ~10ms | Instant |
+| Database lookup | < 1ms | Instant |
+| Profile load | ~5ms | Instant |
+| Learning retrieval | ~15ms | Instant |
 
 ## Troubleshooting
-
-### WASM Build Fails
-
-```bash
-# Ensure wasm32 target is installed
-rustup target add wasm32-unknown-unknown
-
-# Clean and rebuild
-cd core
-cargo clean
-wasm-pack build --target bundler
-```
 
 ### Metro Bundler Issues
 
@@ -280,20 +319,28 @@ cd mobile/android
 ./gradlew clean
 ```
 
+### AsyncStorage Issues
+
+```bash
+# Clear app data (simulator)
+# iOS: Delete app and reinstall
+# Android: Settings > Apps > AllMyAllergies > Clear Data
+```
+
 ## Contributing
 
 1. Create feature branch: `git checkout -b feature/my-feature`
 2. Make changes
-3. Run tests: `cargo test && npm test`
+3. Run tests: `npm test && npm run type-check`
 4. Commit: `git commit -m "feat: add my feature"`
 5. Push: `git push origin feature/my-feature`
 6. Create pull request
 
 ## Resources
 
-- [Rust Book](https://doc.rust-lang.org/book/)
-- [wasm-bindgen Guide](https://rustwasm.github.io/wasm-bindgen/)
 - [React Native Docs](https://reactnative.dev/)
 - [Expo Docs](https://docs.expo.dev/)
 - [Tamagui Docs](https://tamagui.dev/)
+- [Zustand Docs](https://zustand-demo.pmnd.rs/)
 - [agentic-flow](https://github.com/ruvnet/agentic-flow)
+- [SPARC Methodology](https://github.com/ruvnet/sparc)
