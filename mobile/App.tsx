@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { TamaguiProvider, Theme } from 'tamagui';
+import { TamaguiProvider, Theme, Text } from 'tamagui';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -10,6 +10,8 @@ import HomeScreen from './src/screens/HomeScreen';
 import ScanScreen from './src/screens/ScanScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AlertsScreen from './src/screens/AlertsScreen';
+import ReactionJournalScreen from './src/screens/ReactionJournalScreen';
+import LearningInsightsScreen from './src/screens/LearningInsightsScreen';
 
 // Services
 import { initEngine } from './src/services/allergiesService';
@@ -49,6 +51,12 @@ export default function App() {
                 tabBarStyle: {
                   backgroundColor: '#fff',
                   borderTopColor: '#e0e0e0',
+                  height: 60,
+                  paddingBottom: 8,
+                  paddingTop: 4,
+                },
+                tabBarLabelStyle: {
+                  fontSize: 10,
                 },
               }}
             >
@@ -56,7 +64,7 @@ export default function App() {
                 name="Home"
                 component={HomeScreen}
                 options={{
-                  tabBarIcon: () => '🏠',
+                  tabBarIcon: () => <Text fontSize={20}>H</Text>,
                   tabBarLabel: 'Home',
                 }}
               />
@@ -64,23 +72,31 @@ export default function App() {
                 name="Scan"
                 component={ScanScreen}
                 options={{
-                  tabBarIcon: () => '📷',
+                  tabBarIcon: () => <Text fontSize={20}>S</Text>,
                   tabBarLabel: 'Scan',
                 }}
               />
               <Tab.Screen
-                name="Alerts"
-                component={AlertsScreen}
+                name="Journal"
+                component={ReactionJournalScreen}
                 options={{
-                  tabBarIcon: () => '🔔',
-                  tabBarLabel: 'Alerts',
+                  tabBarIcon: () => <Text fontSize={20}>J</Text>,
+                  tabBarLabel: 'Journal',
+                }}
+              />
+              <Tab.Screen
+                name="Learn"
+                component={LearningInsightsScreen}
+                options={{
+                  tabBarIcon: () => <Text fontSize={20}>AI</Text>,
+                  tabBarLabel: 'AI Learn',
                 }}
               />
               <Tab.Screen
                 name="Profile"
                 component={ProfileScreen}
                 options={{
-                  tabBarIcon: () => '👤',
+                  tabBarIcon: () => <Text fontSize={20}>P</Text>,
                   tabBarLabel: 'Profile',
                 }}
               />

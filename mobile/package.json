@@ -1,7 +1,7 @@
 {
   "name": "allmyallergies-mobile",
-  "version": "0.1.0",
-  "description": "AllMyAllergies - The world's best allergy protection mobile app",
+  "version": "0.2.0",
+  "description": "AllMyAllergies - The world's best allergy protection mobile app powered by AgentDB agentic-flow",
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -38,12 +38,14 @@
     "zod": "^3.22.4",
     "date-fns": "^3.0.6",
     "fuse.js": "^7.0.0",
-    "@react-native-async-storage/async-storage": "^1.21.0"
+    "@react-native-async-storage/async-storage": "^1.21.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.7",
     "@types/react": "~18.2.45",
     "@types/react-native": "~0.73.0",
+    "@types/uuid": "^9.0.7",
     "typescript": "^5.3.3",
     "eslint": "^8.56.0",
     "prettier": "^3.1.1",
