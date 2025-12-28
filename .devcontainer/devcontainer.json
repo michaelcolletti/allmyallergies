@@ -1,0 +1,123 @@
+{
+  "name": "AllMyAllergies - SPARC + claude-flow",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:20",
+
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest",
+      "ppa": true
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11",
+      "installTools": true
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "github.copilot",
+        "github.copilot-chat",
+        "eamodio.gitlens",
+        "usernamehw.errorlens",
+        "christian-kohler.path-intellisense",
+        "formulahendry.auto-rename-tag",
+        "dsznajder.es7-react-js-snippets",
+        "msjsdiag.vscode-react-native",
+        "expo.vscode-expo-tools",
+        "orta.vscode-jest",
+        "streetsidesoftware.code-spell-checker",
+        "yoavbls.pretty-ts-errors",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "typescript.preferences.importModuleSpecifier": "relative",
+        "typescript.updateImportsOnFileMove.enabled": "always",
+        "files.associations": {
+          "*.json": "jsonc"
+        },
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
+    }
+  },
+
+  "forwardPorts": [
+    8081,
+    19000,
+    19001,
+    19002,
+    3000,
+    5000
+  ],
+  "portsAttributes": {
+    "8081": {
+      "label": "Metro Bundler",
+      "onAutoForward": "notify"
+    },
+    "19000": {
+      "label": "Expo",
+      "onAutoForward": "notify"
+    },
+    "19001": {
+      "label": "Expo DevTools",
+      "onAutoForward": "openBrowser"
+    },
+    "19002": {
+      "label": "Expo Web",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "Dev Server",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "claude-flow",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash .devcontainer/post-start.sh",
+
+  "containerEnv": {
+    "NODE_ENV": "development",
+    "EXPO_DEVTOOLS_LISTEN_ADDRESS": "0.0.0.0",
+    "REACT_NATIVE_PACKAGER_HOSTNAME": "0.0.0.0"
+  },
+
+  "mounts": [
+    "source=${localWorkspaceFolder}/.claude,target=/home/node/.claude,type=bind,consistency=cached"
+  ],
+
+  "remoteUser": "node",
+
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb"
+  }
+}
