@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  allmyallergies:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspaces/allmyallergies:cached
+      - node_modules:/workspaces/allmyallergies/mobile/node_modules
+      - claude-data:/home/node/.claude
+    ports:
+      - "8081:8081"   # Metro Bundler
+      - "19000:19000" # Expo
+      - "19001:19001" # Expo DevTools
+      - "19002:19002" # Expo Web
+      - "3000:3000"   # Dev Server
+      - "5000:5000"   # claude-flow
+    environment:
+      - NODE_ENV=development
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+      - REACT_NATIVE_PACKAGER_HOSTNAME=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
+    command: sleep infinity
+
+volumes:
+  node_modules:
+  claude-data:
